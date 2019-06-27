@@ -1,35 +1,40 @@
-from typing import Dict
-from functools import lru_cache
-
-memo: Dict[int, int] = {0: 0, 1: 1}
-
-
-def fib(n: int) -> int:
-    if n not in memo:
-        memo[n] = fib(n - 1) + fib(n - 2)
+# dumb fib implementation with recursion
+def fib_recur(n: int) -> int:
     if n < 2:
         return n
-    return memo[n]
+    return fib_recur(n - 1) + fib_recur(n - 2)
 
+# fib implementation with dictionary memoization
+from typing import Dict
 
-@lru_cache(maxsize=None)
+memo_table: Dict[int, int] = {0: 0, 1: 1}
+def fib_memo(n: int) -> int:
+    if n not in memo_table:
+        memo_table[n] = fib_memo(n - 1) + fib_memo(n - 2)
+    return memo_table[n]
+
+# fib implementation with auto lru cache
+from functools import lru_cache
+@lru_cache()
 def fib_lru(n: int) -> int:
     if n < 2:
         return n
     return fib_lru(n - 1) + fib_lru(n - 2)
 
-
+# fib implementation with iterator
 def fib_iter(n: int) -> int:
     if n < 2:
         return n
     last_n: int = 0
     next_n: int = 1
-
     for _ in range(1, n):
         last_n, next_n = next_n, last_n + next_n
     return next_n
 
-
 if __name__ == "__main__":
-    print(fib_lru(499))     #recursive max at 499
-    print(fib_iter(1000))   #iterative performing better and handling more
+    print(fib_recur(10))
+    print(fib_memo(10))
+    print(fib_memo(100))
+    print(fib_lru(100))
+    print(fib_iter(100))
+    print(fib_iter(1000))
