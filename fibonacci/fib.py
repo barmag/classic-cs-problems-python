@@ -1,4 +1,5 @@
 from typing import Dict
+from functools import lru_cache
 
 memo: Dict[int, int] = {0: 0, 1: 1}
 def fib(n: int) -> int:
@@ -8,5 +9,11 @@ def fib(n: int) -> int:
         return n
     return memo[n]
 
+@lru_cache(maxsize=5)
+def fib_lru(n: int) -> int:
+    if n < 2:
+        return n
+    return fib_lru(n-1) + fib_lru(n-2)
+
 if __name__ == "__main__":
-    print(fib(50))
+    print(fib_lru(200))
