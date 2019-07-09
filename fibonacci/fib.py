@@ -30,6 +30,19 @@ def fib_iter(n: int) -> int:
     for _ in range(1, n):
         last_n, next_n = next_n, last_n + next_n
     return next_n
+#fib iterator with a generator
+from typing import Generator
+def fib_generator(n: int) -> Generator[int, None, None]:
+    yield 0 #first item in fib
+    if n > 0:
+        yield 1 #second item in fib
+    last_n: int = 0
+    next_n: int = 1
+
+    for _ in range(1, n):
+        last_n, next_n = next_n, last_n + next_n
+        yield next_n
+    
 
 if __name__ == "__main__":
     print(fib_recur(10))
@@ -38,3 +51,5 @@ if __name__ == "__main__":
     print(fib_lru(100))
     print(fib_iter(100))
     print(fib_iter(1000))
+    for i in fib_generator(50):
+        print(i)
