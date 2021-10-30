@@ -1,7 +1,7 @@
 import unittest
 
 from enum import IntEnum
-from typing import Tuple, List
+from typing import Coroutine, Tuple, List
 
 Neuclotide: IntEnum = IntEnum('Neuclotide', ('A', 'C', 'G', 'T'))
 Codon: Tuple = Tuple[Neuclotide, Neuclotide, Neuclotide]
@@ -18,6 +18,19 @@ def string_to_gene(s: str) -> Gene:
         gene.append(codon)
     return gene
 
+def binary_contains(gene: Gene, key: Codon) -> bool:
+    low = 0
+    high = len(gene) - 1
+    while low <= high:
+        mid: int = (low + high) // 2
+
+        if gene[mid] < key:
+            low = mid + 1
+        elif gene[mid] > key:
+            high = mid - 1
+        else:
+            return True
+    return False
 
 class TestCase(unittest.TestCase):
     def test_valid_gene_length(self):
@@ -28,8 +41,30 @@ class TestCase(unittest.TestCase):
         codon: Codon = (Neuclotide['A'], Neuclotide['C'], Neuclotide['G'])
         expected: Gene = []
         expected.append(codon)
-        
+
         self.assertEqual(expected, string_to_gene(s))
+    def test_find_at_front(self):
+        key: Codon = (Neuclotide['A'], Neuclotide['C'], Neuclotide['G'])
+        gene = sorted(string_to_gene(gene_str))
+        found = binary_contains(gene, key)
+        self.assertTrue(found)
+    def test_find_at_back(self):
+        key: Codon = (Neuclotide['T'], Neuclotide['T'], Neuclotide['T'])
+        gene = sorted(string_to_gene(gene_str))
+        found = binary_contains(gene, key)
+        self.assertTrue(found)
+
+    def test_find_at_mid(self):
+        key: Codon = (Neuclotide['C'], Neuclotide['G'], Neuclotide['T'])
+        gene = sorted(string_to_gene(gene_str))
+        found = binary_contains(gene, key)
+        self.assertTrue(found)
+    
+    def test_not_found(self):
+        key: Codon = (Neuclotide['A'], Neuclotide['G'], Neuclotide['C'])
+        gene = sorted(string_to_gene(gene_str))
+        found = binary_contains(gene, key)
+        self.assertFalse(found)
             
 if __name__ == '__main__':
     unittest.main()
